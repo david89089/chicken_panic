@@ -30,8 +30,6 @@
  */
 
 #include "extension.h"
-#include "CDetour/detours.h"
-#include "IGameConfig.h"
 /**
  * @file extension.cpp
  * @brief Implement extension code here.
@@ -43,7 +41,7 @@ SMEXT_LINK(&g_Sample);
 
 IGameConfig *g_pGameConf = NULL;
 
-DETOUR_DECL_MEMBER0(CDetour_Chicken_Brain, void, void*, fleeFrom, float, duration)
+DETOUR_DECL_MEMBER2(CDetour_Chicken_Brain, void, void*, fleeFrom, float, duration)
 {
 	//DETOUR_MEMBER_CALL(CDetour_Chicken_Brain)(fleeFrom, duration);
 }
@@ -55,7 +53,7 @@ bool Sample::SDK_OnLoad(char *error, size_t maxlength, bool late)
 	char conf_error[255];
     if (!gameconfs->LoadGameConfigFile("chicken_panic.games", &g_pGameConf, conf_error, sizeof(conf_error)))
     {
-        g_pSM->LogError(error, "Could not read chicken_panic.games: %s", conf_error);
+        g_pSM->LogError(myself, "Could not read chicken_panic.games: %s", conf_error);
         return false;
     }
 	
@@ -74,12 +72,9 @@ bool Sample::SDK_OnLoad(char *error, size_t maxlength, bool late)
 
 void Sample::SDK_OnUnload()
 {
-	g_pSM->LogError(myself, "Bye.");
+	if(g_pGameConf != NULL)
+	{
+		gameconfs->CloseGameConfigFile(g_pGameConf);
+		g_pGameConf = NULL;
+	}
 }
-
-/*
-void Sample::OnMapStart()
-{
-	g_pSM->LogError(myself, "Dave is join game OnMapStart.");
-}
-*/

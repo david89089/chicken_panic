@@ -37,8 +37,10 @@
  * @brief Sample extension code header.
  */
 
-#include "smsdk_ext.h"
+#define SMEXT_ENABLE_GAMECONF 1;
 
+#include "smsdk_ext.h"
+#include "CDetour/detours.h"
 
 /**
  * @brief Sample implementation of the SDK Extension.
