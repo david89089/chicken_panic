@@ -46,6 +46,11 @@ bool Sample::SDK_OnLoad(char *error, size_t maxlength, bool late)
 	return true;
 }
 
+void Sample::SDK_OnUnload()
+{
+	g_pSM->LogError(myself, "Bye.");
+}
+
 /*
 void Sample::OnMapStart()
 {
