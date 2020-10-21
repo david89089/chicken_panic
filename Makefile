@@ -22,18 +22,18 @@ MMSOURCE19 = /home/ext/metamod-source-master
 PROJECT = chicken_panic
 
 #Uncomment for Metamod: Source enabled extension
-#USEMETA = true
+USEMETA = false
 
-OBJECTS = smsdk_ext.cpp extension.cpp
+OBJECTS = asm/asm.c CDetour/detours.cpp sdk/smsdk_ext.cpp extension.cpp
 
 ##############################################
 ### CONFIGURE ANY OTHER FLAGS/OPTIONS HERE ###
 ##############################################
 
 C_OPT_FLAGS = -DNDEBUG -O3 -funroll-loops -pipe -fno-strict-aliasing
-C_DEBUG_FLAGS = -D_DEBUG -DDEBUG -g -ggdb3
-C_GCC4_FLAGS = -fvisibility=hidden
-CPP_GCC4_FLAGS = -fvisibility-inlines-hidden -std=c++14
+C_DEBUG_FLAGS = -D_DEBUG -DDEBUG -g -ggdb3 
+C_GCC4_FLAGS = -fvisibility=hidden -mfpmath=sse
+CPP_GCC4_FLAGS = -fvisibility-inlines-hidden
 CPP = gcc
 CPP_OSX = clang
 
@@ -132,8 +132,8 @@ LINK += -m32 -lm -ldl
 
 CFLAGS += -DPOSIX -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp \
 	-D_snprintf=snprintf -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp -DCOMPILER_GCC -Wall -Werror \
-	-Wno-overloaded-virtual -Wno-switch -Wno-unused -msse -DSOURCEMOD_BUILD -DHAVE_STDINT_H -m32
-CPPFLAGS += -Wno-non-virtual-dtor -fno-exceptions -fno-rtti -std=c++11
+	-Wno-overloaded-virtual -Wno-switch -Wno-unused -msse -DSOURCEMOD_BUILD -DHAVE_STDINT_H -m32 
+CPPFLAGS += -Wno-non-virtual-dtor -fno-exceptions -fno-rtti -std=c++14
 
 ################################################
 ### DO NOT EDIT BELOW HERE FOR MOST PROJECTS ###
@@ -187,7 +187,7 @@ endif
 
 # Clang >= 3 || GCC >= 4.7
 ifeq "$(shell expr $(IS_CLANG) \& $(CPP_MAJOR) \>= 3 \| $(CPP_MAJOR) \>= 4 \& $(CPP_MINOR) \>= 7)" "1"
-	CFLAGS += -Wno-delete-non-virtual-dtor
+	CFLAGS += -Wno-delete-non-virtual-dtor 
 endif
 
 # OS is Linux and not using clang
@@ -204,10 +204,13 @@ MAKEFILE_NAME := $(CURDIR)/$(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 
 $(BIN_DIR)/%.o: %.cpp
 	$(CPP) $(INCLUDE) $(CFLAGS) $(CPPFLAGS) -o $@ -c $<
-
+	
 all: check
-	mkdir -p $(BIN_DIR)
-	ln -sf ../smsdk_ext.cpp
+	rm -rf $(BIN_DIR)/*.o
+	rm -rf $(BIN_DIR)/asm/*.o
+	rm -rf $(BIN_DIR)/CDetour/*.o
+	rm -rf $(BIN_DIR)/sdk/*.o
+	rm -rf $(BIN_DIR)/$(BINARY)
 	if [ "$(USEMETA)" = "true" ]; then \
 		ln -sf $(HL2LIB)/$(LIB_PREFIX)vstdlib$(LIB_SUFFIX); \
 		ln -sf $(HL2LIB)/$(LIB_PREFIX)tier0$(LIB_SUFFIX); \
@@ -216,8 +219,6 @@ all: check
 
 check:
 	if [ "$(USEMETA)" = "true" ] && [ "$(ENGSET)" = "false" ]; then \
-		echo "You must supply one of the following values for ENGINE:"; \
-		echo "csgo, left4dead2, left4dead, css, orangeboxvalve, orangebox, or original"; \
 		exit 1; \
 	fi
 
@@ -228,8 +229,3 @@ debug:
 	$(MAKE) -f $(MAKEFILE_NAME) all DEBUG=true
 
 default: all
-
-clean: check
-	rm -rf $(BIN_DIR)/*.o
-	rm -rf $(BIN_DIR)/$(BINARY)
-

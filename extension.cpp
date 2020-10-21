@@ -43,6 +43,7 @@ IGameConfig *g_pGameConf = NULL;
 
 DETOUR_DECL_MEMBER2(CDetour_Chicken_Brain, void, void*, fleeFrom, float, duration)
 {
+	printf("lol\n");
 	//DETOUR_MEMBER_CALL(CDetour_Chicken_Brain)(fleeFrom, duration);
 }
 
@@ -59,7 +60,7 @@ bool Sample::SDK_OnLoad(char *error, size_t maxlength, bool late)
 	
 	CDetourManager::Init(g_pSM->GetScriptingEngine(), g_pGameConf);
 	
-	CDetour* detour = DETOUR_CREATE_MEMBER(CDetour_Chicken_Brain, "CChicken::Flee");
+	CDetour* detour = DETOUR_CREATE_MEMBER(CDetour_Chicken_Brain, "CChicken::Event_Killed");
     if (!detour)
     {
         return false;
