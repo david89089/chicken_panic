@@ -12,7 +12,7 @@ HL2SDK_CSS = ../../../hl2sdk-css
 HL2SDK_OB_VALVE = ../../../hl2sdk-ob-valve
 HL2SDK_L4D = ../../../hl2sdk-l4d
 HL2SDK_L4D2 = ../../../hl2sdk-l4d2
-HL2SDK_CSGO = /home/ext/hl2sdk-sdk2013
+HL2SDK_CSGO = /home/ext/hl2sdk-csgo
 MMSOURCE19 = /home/ext/metamod-source-master
 
 #####################################
@@ -131,7 +131,7 @@ endif
 LINK += -m32 -lm -ldl
 
 CFLAGS += -DPOSIX -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp \
-	-D_snprintf=snprintf -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp -DCOMPILER_GCC -Wall \
+	-D_snprintf=snprintf -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp -DCOMPILER_GCC -Wall -Werror \
 	-Wno-switch -Wno-unused -msse -DSOURCEMOD_BUILD -DHAVE_STDINT_H -m32
 CPPFLAGS += -Wno-non-virtual-dtor -fno-exceptions -fno-rtti -std=c++14 
 
@@ -147,7 +147,7 @@ ifeq "$(DEBUG)" "true"
 else
 	BIN_DIR = Release
 	CFLAGS += $(C_OPT_FLAGS)
-endif
+endif 
 
 ifeq "$(USEMETA)" "true"
 	BIN_DIR := $(BIN_DIR).$(ENGINE)
@@ -203,15 +203,15 @@ OBJ_BIN := $(OBJ_BIN:%.c=$(BIN_DIR)/%.o)
 #  or other changes without mucking up the original.
 MAKEFILE_NAME := $(CURDIR)/$(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 
+$(BIN_DIR)/%.o: %.c
+	$(CPP) $(INCLUDE) $(CFLAGS) -o $@ -c $<
+
 $(BIN_DIR)/%.o: %.cpp
 	$(CPP) $(INCLUDE) $(CFLAGS) $(CPPFLAGS) -o $@ -c $^
 	
-$(BIN_DIR)/%.o: %.c
-	$(CPP) $(INCLUDE) $(CFLAGS) -o $@ -c $<
-	
 all: check
 	rm -rf $(BIN_DIR)/*.o
-	#rm -rf $(BIN_DIR)/asm/*.o
+	rm -rf $(BIN_DIR)/asm/*.o
 	rm -rf $(BIN_DIR)/CDetour/*.o
 	rm -rf $(BIN_DIR)/sdk/*.o
 	rm -rf $(BIN_DIR)/$(BINARY)
