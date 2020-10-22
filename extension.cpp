@@ -65,7 +65,7 @@ bool Sample::SDK_OnLoad(char *error, size_t maxlength, bool late)
     {
         return false;
     }
-    detour->EnableDetour();
+    //detour->EnableDetour();
 	//GET_DETOUR(Chicken_Brain, DETOUR_CREATE_MEMBER(CDetour_Chicken_Brain, "AllocateDefaultRelationships"));
 	
 	return true;
