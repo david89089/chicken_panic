@@ -24,8 +24,8 @@ PROJECT = chicken_panic
 #Uncomment for Metamod: Source enabled extension
 USEMETA = false
 
-OBJECTS = CDetour/detours.cpp sdk/smsdk_ext.cpp extension.cpp
-OBJECTS += asm/asm.c asm/libudis86/itab.c asm/libudis86/syn-att.c asm/libudis86/syn-intel.c asm/libudis86/syn.c asm/libudis86/udis86.c
+OBJECTS = CDetour/detours.cpp sdk/smsdk_ext.cpp extension.cpp asm/asm.c
+#OBJECTS += asm/asm.c asm/libudis86/itab.c asm/libudis86/syn-att.c asm/libudis86/syn-intel.c asm/libudis86/syn.c asm/libudis86/udis86.c
 ##############################################
 ### CONFIGURE ANY OTHER FLAGS/OPTIONS HERE ###
 ##############################################
