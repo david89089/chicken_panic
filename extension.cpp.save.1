@@ -1,3 +1,4 @@
+
 /**
  * vim: set ts=4 :
  * =============================================================================
@@ -30,8 +31,6 @@
  */
 
 #include "extension.h"
-#include <vector.h>
-
 /**
  * @file extension.cpp
  * @brief Implement extension code here.
@@ -51,7 +50,7 @@ DETOUR_DECL_MEMBER0(CDetour_Chicken_FireGameEvent, void)
 
 void test(void* Rustam)
 {
-    static void* func = NULL;
+	static void* func = NULL;
     if (!func)
     {
         if (!g_pGameConf->GetMemSig("CChicken::Run", &func))
@@ -60,37 +59,16 @@ void test(void* Rustam)
             return;
         }
     }
-	
-	typedef void(*_func)(void*);
-    _func thisfunc = (_func)func;
-    thisfunc(Rustam);
+
+    typedef void(__thiscall* funcs)(void*);
+    sfunc thisfunc = (sfunc)(func);
+    (thisfunc)(Rustam);
 }
 
 DETOUR_DECL_MEMBER0(CDetour_Chicken_Walk, void)
 {
 	//printf("lol\n");
 	test(this);
-}
-
-DETOUR_DECL_MEMBER2(CDetour_Chicken_ResolveCollisions, void, const Vector&, desiredPosition, float, deltaT)
-{
-	Vector testPosition = desiredPosition;
-	
-	void* chicken = (void*)this;
-	Vector vec = *(Vector*)((char*)chicken + 484);
-	
-	testPosition = testPosition - vec;
-	Vector velocityFromAnimation = testPosition/deltaT;
-
-	deltaT = deltaT * 2.2;
-	testPosition = vec + velocityFromAnimation * deltaT;
-	
-	DETOUR_MEMBER_CALL(CDetour_Chicken_ResolveCollisions)(testPosition, deltaT);
-}
-
-DETOUR_DECL_MEMBER1(CDetour_Chicken_Follow, void, void*, pPlayer)
-{
-	//printf("lol\n");
 }
 
 bool Sample::SDK_OnLoad(char *error, size_t maxlength, bool late)
@@ -114,20 +92,6 @@ bool Sample::SDK_OnLoad(char *error, size_t maxlength, bool late)
 	detour->EnableDetour();
 	
 	detour = DETOUR_CREATE_MEMBER(CDetour_Chicken_Walk, "CChicken::Walk");
-    if (!detour)
-    {
-        return false;
-    }
-	detour->EnableDetour();
-	
-	detour = DETOUR_CREATE_MEMBER(CDetour_Chicken_ResolveCollisions, "CChicken::ResolveCollisions");
-    if (!detour)
-    {
-        return false;
-    }
-	detour->EnableDetour();
-	
-	detour = DETOUR_CREATE_MEMBER(CDetour_Chicken_Follow, "CChicken::SetChickenStartFollowingPlayer");
     if (!detour)
     {
         return false;
