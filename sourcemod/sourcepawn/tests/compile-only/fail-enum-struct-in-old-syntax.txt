@@ -1,1 +1,0 @@
-(6) : error 009: invalid array size (negative, zero or out of bounds)
